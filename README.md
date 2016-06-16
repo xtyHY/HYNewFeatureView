@@ -2,7 +2,7 @@
 HYNewFeatureViewDemo  
 首次启动引导页/新特性显示页     
   
-![image](https://github.com/xtyHY/HYNewFeatureViewDemo/blob/master/demo.gif)  
+![image](https://github.com/xtyHY/HYNewFeatureView/blob/master/demo.gif)  
 
 ##### 说明  
 初始化一个全屏的新特性界面，根据基本名称和图片数量创建  
