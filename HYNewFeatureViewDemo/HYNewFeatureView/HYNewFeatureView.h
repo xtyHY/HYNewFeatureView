@@ -7,6 +7,8 @@
 
 #import <UIKit/UIKit.h>
 
+typedef void(^NewFeatureViewHiddenBlock)(BOOL isClickSkip, BOOL isReadFinish);
+
 /**
  *  @author HY, 16-04-15
  *
@@ -24,7 +26,14 @@
 /**
  *  @author HY, 16-04-15
  *
- *  @brief 显示新特性的scrollview，默认显示pageControl，最后一个页面为白色（会随着滚动变透明），最终被移除
+ *  @brief 显示新特性的scrollview，默认显示pageControl，最后一个页面为白色（会随着滚动变透明），最终被移除一个全屏的新特性界面
+ *         根据基本名称和图片数量创建
+ *         图片放在工程目录中，使用 基本名称_机型_数量.格式 来命名
+ *         机型识别为4和4s对应4，5和5s对应5，6和6s对应6，6p和6sp对应6p
+ *         举例：3张名字为feature的新特性png图需要以下文件
+ *              feature_4_0.png feature_5_0.png feature_6_0.png feature_6p_0.png
+ *              feature_4_1.png feature_5_1.png feature_6_1.png feature_6p_1.png
+ *              feature_4_2.png feature_5_2.png feature_6_2.png feature_6p_2.png
  */
 @interface HYNewFeatureView : UIView
 
@@ -34,19 +43,16 @@
 @property (nonatomic, strong) UIColor *lastViewColor;//!<滚动到最后一个页面的颜色，默认白色（会随着滚动变透明）
 
 /**
- *  @author HY, 16-04-15
- *
- *  @brief 初始化一个全屏的新特性界面，根据基本名称和图片数量创建
- *         图片放在工程目录中，使用 基本名称数量_机型.格式 来命名
- *         机型识别为4和4s对应4，5和5s对应5，6和6s对应6，6p和6sp对应6p
- *         举例：3张名字为feature的新特性png图需要以下文件
- *              feature0_4.png feature0_5.png feature0_6.png feature0_6p.png
- *              feature1_4.png feature1_5.png feature1_6.png feature1_6p.png
- *              feature2_4.png feature2_5.png feature2_6.png feature2_6p.png
- *  @param baseName 新特性图片基本名称
+ *  @brief 使用默认方案初始化
+ *         图片基本名称feature
+ *         page指示器名称PageControlNormal/PageControlHighlited
+ *         page指示器距离底部80，单个Size为30x30
  *  @param imageNum 图片数量
- *
- *  @return 新特性界面
+ */
+- (instancetype)initWithImageNum:(NSInteger)imageNum;
+
+/**
+ *  @brief 初始化一个全屏的新特性界面，根据基本名称、图片数量、page指示器图片名称，page指示器距离创建
  */
 - (instancetype)initWithBaseImageName:(NSString *)baseName
                              imageNum:(NSInteger)imageNum
@@ -55,19 +61,15 @@
                       pageControlRect:(CGRect)pageControlRect;
 
 /**
- *  @author HY, 16-04-15
- *
- *  @brief 在指定view上显示
- *
- *  @param view 被放置的view
+ *  @brief 显示新特性界面
  */
-- (void)showOnView:(UIView *)view;
+- (void)show;
 
 /**
- *  @author HY, 16-04-15
+ *  @brief 显示新特性界面
  *
- *  @brief 隐藏新特性界面，在滚动到最后的时候会被调用，可以不手动调用
+ *  @param block 新特性界面隐藏回调
  */
-- (void)hide;
+- (void)showWithHidden:(NewFeatureViewHiddenBlock)block;
 
 @end

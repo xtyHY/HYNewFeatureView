@@ -20,6 +20,8 @@
 #define IS_IPHONE_6 (IS_IPHONE && SCREEN_MAX_LENGTH == 667.0)
 #define IS_IPHONE_6P (IS_IPHONE && [UIScreen mainScreen].scale == 3.0)
 
+#define RGBA(r,g,b,a) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:a]
+
 @implementation HYNewFeaturePageControl
 
 - (instancetype)initWithFrame:(CGRect)frame{
@@ -103,11 +105,20 @@
     NSString *_baseImageName;
     UIImageView *_imageViewBlank;
     UIScrollView *_scrollView;
+    
+    NewFeatureViewHiddenBlock _block;
 }
+
+@property (nonatomic, strong) UIButton *skipBtn;
 
 @end
 
 @implementation HYNewFeatureView
+
+- (instancetype)initWithImageNum:(NSInteger)imageNum{
+    
+    return [self initWithBaseImageName:@"feature" imageNum:imageNum pageControlNormalImageName:@"PageControlNormal" pageControlimageHighlitedName:@"PageControlHighlited" pageControlRect:(CGRect){0,ScreenHeight-80,ScreenWidth,30}];
+}
 
 - (instancetype)initWithBaseImageName:(NSString *)baseName
                              imageNum:(NSInteger)imageNum
@@ -115,7 +126,6 @@
         pageControlimageHighlitedName:(NSString *)imageHighlitedName
                       pageControlRect:(CGRect)pageControlRect
 {
-    
     self = [super init];
     if (self) {
         
@@ -158,8 +168,8 @@
     
     for (NSInteger i=0; i<_imageNum; i++) {
         
-        //如果baseImageName是feature imageNum是2 的话 在iphone4、4s上是feature1_4
-        NSMutableString *imageNameStr = [[NSMutableString alloc] initWithFormat:@"%@%li_%@",_baseImageName,i,imageSizeStr];
+        //如果baseImageName是feature imageNum是2 的话 在iphone4、4s上是feature_4_0、feature_4_1
+        NSMutableString *imageNameStr = [[NSMutableString alloc] initWithFormat:@"%@_%@_%li",_baseImageName,imageSizeStr,i];
         
 #warning 请注意传入的名字和文件名字是否一致，否则必崩
         NSString *imagePath = [[NSBundle mainBundle] pathForResource:imageNameStr ofType:imageTypeStr];
@@ -193,6 +203,8 @@
         [_pageControl setCurrentPage:0];
         [self addSubview:_pageControl];
     }
+    
+    [self addSubview:self.skipBtn];
 }
 
 #pragma mark scroll滚动时若是最后一张则alpha渐变 移动完则移除所有
@@ -202,31 +214,48 @@
         
         _imageViewBlank.alpha = 1.0-(scrollView.contentOffset.x-ScreenWidth*(_imageNum-1))/ScreenWidth;
         _pageControl.alpha = _imageViewBlank.alpha - 0.5;
+        _skipBtn.alpha = 0;
     }else{
         _pageControl.currentPage = (NSInteger)(scrollView.contentOffset.x/ScreenWidth);
         _pageControl.alpha = 1;
         _imageViewBlank.alpha = 1;
+        _skipBtn.alpha = 1;
     }
     
     //移动到最后直接移除所有
     if (scrollView.contentOffset.x == ScreenWidth*(_imageNum))
-        [self hide];
+        [self hideWithSkip:NO readFinish:YES];
 }
 
 #pragma mark 显示
-- (void)showOnView:(UIView *)view{
+- (void)show{
     
-//    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+    UIWindow *window = [[UIApplication sharedApplication] keyWindow] ? [[UIApplication sharedApplication] keyWindow] : [[[UIApplication sharedApplication] windows] firstObject];
+    
     [self configImageData];
     [self setUpSubviews];
-    [view addSubview:self];
+    [window addSubview:self];
+}
+
+- (void)showWithHidden:(NewFeatureViewHiddenBlock)block{
+    
+    _block = block;
+    [self show];
 }
 
 #pragma mark 移除所有
 - (void)hide{
     
-//    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     [self removeFromSuperview];
+}
+
+- (void)hideWithSkip:(BOOL)isClickSkip readFinish:(BOOL)isReadFinish{
+    
+    if (_block) {
+        _block(isClickSkip, isReadFinish);
+    }
+    
+    [self hide];
 }
 
 #pragma mark 根据机型获取名称后缀
@@ -248,6 +277,35 @@
     
     return @"";
 }
+
+- (UIButton *)skipBtn{
+    
+    if (_skipBtn == nil) {
+        
+        _skipBtn = [[UIButton alloc] initWithFrame:(CGRect){ScreenWidth-75-15, 20, 75, 33}];
+        _skipBtn.titleLabel.font = [UIFont systemFontOfSize:16];
+        [_skipBtn setTitle:@"跳过" forState:UIControlStateNormal];
+        [_skipBtn setTitleColor:RGBA(255, 255, 255, 1) forState:UIControlStateNormal];
+        _skipBtn.layer.cornerRadius = 35/2.0f;
+        _skipBtn.layer.borderWidth = 1.0f;
+        _skipBtn.layer.borderColor = RGBA(255, 255, 255, 1).CGColor;
+        [_skipBtn addTarget:self action:@selector(clickSkipBtn) forControlEvents:UIControlEventTouchUpInside];
+    }
+    
+    return _skipBtn;
+}
+
+#pragma mark - action
+- (void)clickSkipBtn{
+    
+    [self hideWithSkip:YES readFinish:YES];
+}
+
+- (void)dealloc{
+    
+    NSLog(@"NewFeatureView--dealloc");
+}
+
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.

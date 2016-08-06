@@ -7,6 +7,12 @@
 //
 
 #import "AppDelegate.h"
+#import "HYNewFeatureView.h"
+#import "ViewController.h"
+
+#define ScreenBounds [UIScreen mainScreen].bounds
+#define ScreenWidth [UIScreen mainScreen].bounds.size.width
+#define ScreenHeight [UIScreen mainScreen].bounds.size.height
 
 @interface AppDelegate ()
 
@@ -17,7 +23,47 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    UIWindow *windwow = [[UIWindow alloc] initWithFrame:ScreenBounds];
+    self.window = windwow;
+    self.window.rootViewController = [[ViewController alloc] init];
+    [self.window makeKeyAndVisible];
+    
+//    [self showNewFeatureMethod1];
+    [self showNewFeatureMethod2];
+    
     return YES;
+}
+
+- (void)showNewFeatureMethod1{
+    
+    //初始化一个新特性页面对象
+    HYNewFeatureView *newFeatureSC = [[HYNewFeatureView alloc] initWithBaseImageName:@"feature"
+                                                                            imageNum:3
+                                                          pageControlNormalImageName:@"PageControlNormal"
+                                                       pageControlimageHighlitedName:@"PageControlHighlited"
+                                                                     pageControlRect:(CGRect){0,ScreenHeight-80,ScreenWidth,30}];
+    newFeatureSC.imageTypeStr = @"jpg";//新特性界面的文件类型，默认是png
+    newFeatureSC.lastViewColor = [UIColor clearColor];//默认白色，可进行设置
+    newFeatureSC.pageControl.imgSize = 10;//默认13，可进行设置
+    newFeatureSC.pageControl.spaceWidth = 5;//默认10，可进行设置
+    //显示这个新特性页面
+    [newFeatureSC show];
+}
+
+- (void)showNewFeatureMethod2{
+    
+    //使用默认基本名称feature，
+    //默认page控制器名称PageControlNormal/PageControlHighlited
+    //默认page控制器位置(CGRect){0,ScreenHeight-80,ScreenWidth,30}
+    HYNewFeatureView *newFeatureSC = [[HYNewFeatureView alloc] initWithImageNum:3];
+    newFeatureSC.imageTypeStr = @"jpg";
+    
+    //显示并对用户阅读完以及跳过操作做block回调处理
+    [newFeatureSC showWithHidden:^(BOOL isClickSkip, BOOL isReadFinish) {
+        
+        NSLog(@"%i %i",isClickSkip, isReadFinish);
+    }];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
