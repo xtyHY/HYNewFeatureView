@@ -111,7 +111,8 @@
 				049F53231CC0E51200496400 /* HYNewFeatureView.h */,
 				049F53241CC0E51200496400 /* HYNewFeatureView.m */,
 			);
-			path = HYNewFeatureView;
+			name = HYNewFeatureView;
+			path = ../HYNewFeatureView;
 			sourceTree = "<group>";
 		};
 		049F52E21CC0E4CB00496400 /* FeaturePics */ = {
