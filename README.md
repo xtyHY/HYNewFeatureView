@@ -1,5 +1,4 @@
-# HYNewFeatureViewDemo
-HYNewFeatureViewDemo  
+# HYNewFeatureView
 首次启动引导页/新特性显示页     
   
 ![image](https://github.com/xtyHY/HYNewFeatureView/blob/master/demo.gif)  
