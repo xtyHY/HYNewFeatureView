@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "HYNewFeatureView"
-  s.version      = "1.4"
+  s.version      = "1.4.1"
   s.summary      = "展示新特性界面"
 
   s.description  = <<-DESC
