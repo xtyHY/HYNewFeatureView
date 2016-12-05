@@ -169,7 +169,7 @@
     for (NSInteger i=0; i<_imageNum; i++) {
         
         //如果baseImageName是feature imageNum是2 的话 在iphone4、4s上是feature_4_0、feature_4_1
-        NSMutableString *imageNameStr = [[NSMutableString alloc] initWithFormat:@"%@_%@_%li",_baseImageName,imageSizeStr,i];
+        NSMutableString *imageNameStr = [[NSMutableString alloc] initWithFormat:@"%@_%@_%li",_baseImageName,imageSizeStr,(long)i];
         
 #warning 请注意传入的名字和文件名字是否一致，否则必崩
         NSString *imagePath = [[NSBundle mainBundle] pathForResource:imageNameStr ofType:imageTypeStr];
