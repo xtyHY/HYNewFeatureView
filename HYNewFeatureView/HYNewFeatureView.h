@@ -72,4 +72,9 @@ typedef void(^NewFeatureViewHiddenBlock)(BOOL isClickSkip, BOOL isReadFinish);
  */
 - (void)showWithHidden:(NewFeatureViewHiddenBlock)block;
 
+/**
+ 判断是否需要显示
+ */
++ (BOOL)judgeNeedShow;
+
 @end

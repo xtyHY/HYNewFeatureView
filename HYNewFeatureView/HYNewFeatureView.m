@@ -230,6 +230,9 @@
 #pragma mark 显示
 - (void)show{
     
+    if (![HYNewFeatureView judgeNeedShow])
+        return;
+    
     UIWindow *window = [[UIApplication sharedApplication] keyWindow] ? [[UIApplication sharedApplication] keyWindow] : [[[UIApplication sharedApplication] windows] firstObject];
     
     [self configImageData];
@@ -251,11 +254,28 @@
 
 - (void)hideWithSkip:(BOOL)isClickSkip readFinish:(BOOL)isReadFinish{
     
+    if (isReadFinish) {
+        NSString *bundleVerStr = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
+        [[NSUserDefaults standardUserDefaults] setValue:bundleVerStr forKey:@"localVersion"];
+    }
+    
     if (_block) {
         _block(isClickSkip, isReadFinish);
     }
     
     [self hide];
+}
+
+#pragma mark 判断是否需要显示
++ (BOOL)judgeNeedShow {
+    NSString *bundleVerStr = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
+    NSString *savedVerStr  = [[NSUserDefaults standardUserDefaults] stringForKey:@"localVersion"];
+    
+    if ([bundleVerStr isEqualToString:savedVerStr]) {
+        return NO;
+    } else {
+        return YES;
+    }
 }
 
 #pragma mark 根据机型获取名称后缀
